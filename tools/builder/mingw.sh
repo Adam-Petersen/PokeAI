@@ -8,12 +8,12 @@ export CROSS_OS=windows
 
 BUILD_ENV=$BUILD_ENV$(cat <<EOF
 
-export CPPFLAGS="$CPPFLAGS${CPPFLAGS:+ }-DMINGW_HAS_SECURE_API -DFFI_STATIC_BUILD"
-export CFLAGS="$CFLAGS${CFLAGS:+ }-static-libgcc -static-libstdc++ -static -lpthread -DMINGW_HAS_SECURE_API -DFFI_STATIC_BUILD -lm"
-export CXXFLAGS="$CXXFLAGS${CXXFLAGS:+ }-static-libgcc -static-libstdc++ -static -lpthread -DMINGW_HAS_SECURE_API -DFFI_STATIC_BUILD -lm"
-export OBJCXXFLAGS="$OBJCXXFLAGS${OBJCXXFLAGS:+ }-static-libgcc -static-libstdc++ -static -lpthread -DMINGW_HAS_SECURE_API -DFFI_STATIC_BUILD -lm"
-export LDFLAGS="$LDFLAGS${LDFLAGS:+ }-static-libgcc -static-libstdc++ -static -lpthread -DMINGW_HAS_SECURE_API -DFFI_STATIC_BUILD -lm"
-export LIBS="-lpthread -lm -lole32"
+export CPPFLAGS="$CPPFLAGS${CPPFLAGS:+ }-DMINGW_HAS_SECURE_API"
+export CFLAGS="$CFLAGS${CFLAGS:+ }-static-libgcc -static-libstdc++ -static -lpthread -DMINGW_HAS_SECURE_API -lm"
+export CXXFLAGS="$CXXFLAGS${CXXFLAGS:+ }-static-libgcc -static-libstdc++ -static -lpthread -DMINGW_HAS_SECURE_API -lm"
+export OBJCXXFLAGS="$OBJCXXFLAGS${OBJCXXFLAGS:+ }-static-libgcc -static-libstdc++ -static -lpthread -DMINGW_HAS_SECURE_API -lm"
+export LDFLAGS="$LDFLAGS${LDFLAGS:+ }-static-libgcc -static-libstdc++ -static -lpthread -DMINGW_HAS_SECURE_API -lm"
+export LIBS="-lpthread -lm"
 
 export UUID_LIBS="-luuid_mingw -luuid"
 
@@ -101,9 +101,6 @@ OUUID_LIBS="\$UUID_LIBS"
 OSTRIP="\$STRIP"
 OPATH="\$PATH"
 
-OCONFIGURE_REQUIRED_ARGS="\$CONFIGURE_REQUIRED_ARGS"
-OCMAKE_REQUIRED_ARGS="\$CMAKE_REQUIRED_ARGS"
-
 $BUILD_ENV
 
 export CC="$HOST_CC"
@@ -118,11 +115,11 @@ export UUID_LIBS="$HOST_UUID_LIBS"
 export STRIP="$HOST_STRIP"
 export PATH="$BUILD_ROOT/host/bin:\$PATH"
 
+OCONFIGURE_REQUIRED_ARGS="\$CONFIGURE_REQUIRED_ARGS"
+OCMAKE_REQUIRED_ARGS="\$CMAKE_REQUIRED_ARGS"
+
 CONFIGURE_REQUIRED_ARGS="\$(puts "\$CONFIGURE_REQUIRED_ARGS" | sed 's/--host[^ ]*//g')"
 CMAKE_REQUIRED_ARGS="\$(puts "\$CMAKE_REQUIRED_ARGS" | sed 's/-DCMAKE_TOOLCHAIN_FILE=[^ ]*//g')"
-
-unset TARGET_ENV
-export HOST_ENV=1
 EOF
     fi
 
@@ -167,8 +164,6 @@ CONFIGURE_REQUIRED_ARGS="\$OCONFIGURE_REQUIRED_ARGS"
 CMAKE_REQUIRED_ARGS="\$OCMAKE_REQUIRED_ARGS"
 OCONFIGURE_REQUIRED_ARGS= OCMAKE_REQUIRED_ARGS=
 
-unset HOST_ENV
-export TARGET_ENV=1
 $BUILD_ENV
 EOF
     fi
@@ -287,14 +282,13 @@ table_line_append DIST_PATCHES $libicu " \
     https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0007-actually-move-to-bin.mingw.patch \
     https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0008-data-install-dir.mingw.patch \
     https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0009-fix-bindir-in-config.mingw.patch \
+    https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0010-msys-rules-for-makefiles.mingw.patch \
     https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0011-sbin-dir.mingw.patch \
     https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0012-libprefix.mingw.patch \
-    https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0014-mingwize-pkgdata.mingw.patch \
     https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0015-debug.mingw.patch \
     https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0016-icu-pkgconfig.patch \
     https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0017-icu-config-versioning.patch \
     https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0021-mingw-static-libraries-without-s.patch \
-    https://raw.githubusercontent.com/Alexpux/MINGW-packages/master/mingw-w64-icu/0023-fix-twice-include-platform_make_fragment.patch \
 "
 
 table_line_append DIST_PRE_BUILD $libicu ":; sed -E -i.bak 's/@echo -n /@printf \"%s\" /g' config/mh-mingw*;"
@@ -352,7 +346,7 @@ table_line_append DIST_CONFIGURE_OVERRIDES ffmpeg "--extra-ldflags='-Wl,-allow-m
 
 table_line_append DIST_ARGS gettext "--enable-threads=windows"
 
-table_line_append DIST_ARGS glib -Dforce_posix_threads=true
+table_line_append DIST_ARGS glib "--with-threads=posix --disable-libelf"
 
 table_line_append  DIST_PATCHES glib "\
     https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-glib2/0001-Update-g_fopen-g_open-and-g_creat-to-open-with-FILE_.patch \

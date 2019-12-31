@@ -31,7 +31,7 @@
 // ImageMagick makes the name wxvbam, but wx expects wxvbam_xpm
 #define wxvbam wxvbam_xpm
 const
-#include "xrc/visualboyadvance-m.xpm"
+#include "xrc/vbam.xpm"
 #undef wxvbam
 #endif
 
@@ -1669,27 +1669,17 @@ public:
                 if (defkeys_keyboard[i].key)
                     a.push_back(defkeys_keyboard[i]);
 
-                for (auto bind : defkeys_joystick[i])
-                    a.push_back(bind);
+                if (defkeys_joystick[i].joy)
+                    a.push_back(defkeys_joystick[i]);
+
+                if (extrakeys_joystick[i].joy)
+                    a.push_back(extrakeys_joystick[i]);
 
                 tc->SetValue(wxJoyKeyTextCtrl::ToString(a));
             }
         }
     }
 } JoyPadConfigHandler[4];
-
-class JoystickPoller : public wxTimer {
-    public:
-        void Notify() {
-            wxGetApp().frame->PollJoysticks();
-        }
-        void ShowDialog(wxShowEvent& ev) {
-            if (ev.IsShown())
-                Start(50);
-            else
-                Stop();
-        }
-};
 
 // manage fullscreen mode widget
 // technically, it's more than a validator: it modifies the widget as well
@@ -2698,7 +2688,7 @@ void MainFrame::BindAppIcon() {
 #ifdef __WXMSW__
     if (IsWindowsVistaOrGreater()) {
         wxDynamicLibrary comctl32("comctl32", wxDL_DEFAULT | wxDL_QUIET);
-        func_LoadIconWithScaleDown load_icon_scaled = reinterpret_cast<func_LoadIconWithScaleDown>(comctl32.GetSymbolAorW("LoadIconWithScaleDown"));
+        func_LoadIconWithScaleDown load_icon_scaled = reinterpret_cast<func_LoadIconWithScaleDown>(comctl32.GetSymbol("LoadIconWithScaleDown"));
         int icon_set_count = 0;
 
         HICON hIconLg;
@@ -3797,14 +3787,6 @@ bool MainFrame::BindControls()
                     wxCommandEventHandler(JoyPadConfig_t::JoypadConfigButtons),
                     NULL, &JoyPadConfigHandler[i]);
             }
-
-            // poll the joystick
-            JoystickPoller* jpoll = new JoystickPoller();
-
-            joyDialog->Connect(wxID_ANY, wxEVT_SHOW,
-                wxShowEventHandler(JoystickPoller::ShowDialog),
-                jpoll, jpoll);
-
             joyDialog->Fit();
         }
 

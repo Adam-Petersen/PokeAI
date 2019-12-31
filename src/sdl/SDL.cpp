@@ -22,6 +22,7 @@
 #include <windows.h>
 #endif
 
+#include <iostream>
 #include <cmath>
 #include <stdarg.h>
 #include <stdio.h>
@@ -763,12 +764,10 @@ void sdlReadBattery()
 
 void sdlReadDesktopVideoMode()
 {
-    if (window) {
-        SDL_DisplayMode dm;
-        SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(window), &dm);
-        desktopWidth = dm.w;
-        desktopHeight = dm.h;
-    }
+    SDL_DisplayMode dm;
+    SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(window), &dm);
+    desktopWidth = dm.w;
+    desktopHeight = dm.h;
 }
 
 static void sdlResizeVideo()
@@ -1524,6 +1523,7 @@ void SetHomeDataDir()
 int main(int argc, char** argv)
 {
     fprintf(stdout, "%s\n", vba_name_and_subversion);
+    std::cout << "starting\n";
 
     home = argv[0];
     SetHome(home);

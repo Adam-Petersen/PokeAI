@@ -20,10 +20,6 @@
 [![Join the chat at https://gitter.im/visualboyadvance-m/Lobby](https://badges.gitter.im/visualboyadvance-m/Lobby.svg)](https://gitter.im/visualboyadvance-m/Lobby)
 [![travis](https://travis-ci.org/visualboyadvance-m/visualboyadvance-m.svg?branch=master)](https://travis-ci.org/visualboyadvance-m/visualboyadvance-m)
 [![appveyor](https://ci.appveyor.com/api/projects/status/5ckx25vct1q1ovfc?svg=true)](https://ci.appveyor.com/project/ZachBacon65337/visualboyadvance-m-2ys5r)
-[![Snap Status](https://build.snapcraft.io/badge/visualboyadvance-m/visualboyadvance-m.svg)](https://build.snapcraft.io/user/visualboyadvance-m/visualboyadvance-m)
-
-
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/visualboyadvance-m)
 
 # Visual Boy Advance - M
 
@@ -63,7 +59,7 @@ make -j`nproc`
 Solus, OpenSUSE, Gentoo and RHEL/CentOS) and Mac OS X (homebrew, macports or
 fink.)
 
-The Ninja cmake generator is also now supported.
+The Ninja cmake generator is also now supported (except for Visual Studio.)
 
 ## Building a Libretro core
 
@@ -79,17 +75,10 @@ Copy vbam_libretro.so to your RetroArch cores directory.
 ## Visual Studio Support
 
 For visual studio, dependency management is handled automatically with vcpkg,
-From the Visual Studio GUI, just clone the repository with git and build with
-the cmake configurations provided.
-
-If the GUI does not detect cmake, go to `File -> Open -> CMake` and open the
-`CMakeLists.txt`.
-
-If you are using 2017, make sure you have all the latest updates, some issues
-with cmake projects in the GUI have been fixed.
-
-You can also build from the developer command prompt or powershell with the
-environment loaded.
+just clone the repository with git and build with cmake. You can do this from
+the developer command line as well. 2019 will not work yet for building
+dependencies, but you can build the dependencies in 2017 and then use the
+project from 2019.
 
 Using your own user-wide installation of vcpkg is supported, just make sure the
 environment variable `VCPKG_ROOT` is set.
@@ -99,11 +88,12 @@ To build in the visual studio command prompt, use something like this:
 ```
 mkdir build
 cd build
-cmake .. -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_BUILD_TYPE=Debug -G Ninja
-ninja
+cmake .. -DVCPKG_TARGET_TRIPLET=x64-windows
+msbuild -m -p:BuildInParallel=true -p:Configuration=Release .\ALL_BUILD.vcxproj 
 ```
 
-This support is new and we are still working out some issues.
+This support is new and we are still working out some issues, including support
+for static builds.
 
 ## Dependencies
 
@@ -194,7 +184,6 @@ Here is the complete list:
 | ENABLE_OPENAL         | Enable OpenAL for the wxWidgets port                                 | AUTO                  |
 | ENABLE_SSP            | Enable gcc stack protector support (gcc only)                        | OFF                   |
 | ENABLE_ASAN           | Enable libasan sanitizers (by default address, only in debug mode)   | OFF                   |
-| UPSTREAM_RELEASE      | Do some release tasks, like codesigning, making zip and gpg sigs.    | OFF                   |
 | VBAM_STATIC           | Try link all libs statically (the following are set to ON if ON)     | OFF                   |
 | SDL2_STATIC           | Try to link static SDL2 libraries                                    | OFF                   |
 | SFML_STATIC_LIBRARIES | Try to link static SFML libraries                                    | OFF                   |
@@ -298,5 +287,3 @@ If you have multiple small commits for a change, please try to use `git rebase
 good commit messages!) See:
 https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History if you are new to
 this.
-
-

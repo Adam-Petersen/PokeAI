@@ -4,7 +4,9 @@ src/wx/cmd-evtable.h
 src/wx/cmdhandlers.h
 src/wx/cmdtab.cpp
 src/wx/wxvbam.xrs
-*build*/*
+build/*
+build32/*
+vsbuild/*
 cmake-build*
 dependencies/*
 vcpkg/*

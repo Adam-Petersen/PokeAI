@@ -3,10 +3,8 @@
 set -e
 
 target_bits=64
-target_cpu_family=x86_64
 target_cpu=x86_64
 lib_suffix=64
-target_endian=little
 
 case "$1" in
     -64)
@@ -14,7 +12,6 @@ case "$1" in
         ;;
     -32)
         target_bits=32
-        target_cpu_family=x86
         target_cpu=i686
         lib_suffix=
         shift
@@ -64,40 +61,6 @@ export CONFIGURE_REQUIRED_ARGS="--host=${target_arch}"
 
 export CMAKE_REQUIRED_ARGS="$CMAKE_REQUIRED_ARGS -DCMAKE_TOOLCHAIN_FILE='$(perl -MCwd=abs_path -le "print abs_path(q{${0%/*}/../../cmake/Toolchain-cross-MinGW-w64-${target_cpu}.cmake})")'"
 
-export MESON_BASE_ARGS=""
-
-lc_build_os=$(uname -s | tr 'A-Z' 'a-z')
-
-meson() {
-    if [ -z "$HOST_ENV" ]; then
-        cat >$BUILD_ROOT/tmp/meson_cross_$$.txt <<EOF
-[host_machine]
-system     = 'windows'
-cpu_family = '$target_cpu_family'
-cpu        = '$target_cpu'
-endian     = '$target_endian'
-
-[binaries]
-c       = '${CC#ccache }'
-cpp     = '${CXX#ccache }'
-windres = '${target_arch}-windres'
-strip   = '$STRIP'
-
-[properties]
-c_args        = '$CPPFLAGS $CFLAGS'
-c_link_args   = '$LDFLAGS'
-cpp_args      = '$CPPFLAGS $CXXFLAGS'
-cpp_link_args = '$LDFLAGS'
-EOF
-
-        # meson is fucking retarded, we set all these in the cross file
-        CC= CXX= CPPFLAGS= CFLAGS= CXXFLAGS= LDFLAGS= command meson --cross-file $BUILD_ROOT/tmp/meson_cross_$$.txt "$@"
-    else
-        # in the host build case, we can use the environment
-        command meson "$@"
-    fi
-}
-
 . "${0%/*}/../builder/mingw.sh"
 
 installing_cross_deps() {
@@ -133,21 +96,18 @@ suse_install_cross_deps() {
     sudo zypper in -y "$@" gettext-tools wxGTK3-3_2-devel python3-pip
 }
 
-# do not install deps if there are other options like --env
-if [ $# -eq 0 ]; then
-    case "$linux_distribution" in
-        fedora)
-            installing_cross_deps
-            fedora_install_cross_deps
-            done_msg
-            ;;
-        suse)
-            installing_cross_deps
-            suse_install_cross_deps
-            done_msg
-            ;;
-    esac
-fi
+case "$linux_distribution" in
+    fedora)
+        installing_cross_deps
+        fedora_install_cross_deps
+        done_msg
+        ;;
+    suse)
+        installing_cross_deps
+        suse_install_cross_deps
+        done_msg
+        ;;
+esac
 
 openssl_host=mingw
 [ "$target_bits" -eq 64 ] && openssl_host=mingw64
@@ -162,6 +122,8 @@ table_line_append DIST_ARGS libicu-target "--with-cross-build=\$BUILD_ROOT/dists
 table_line_append DIST_PATCHES openal '-p0 https://gist.githubusercontent.com/rkitover/d371d199ee0ac67864d0940aa7e7c12c/raw/29f3bc4afaba41b35b3fcbd9d18d1f0a22e3dc13/openal-cross-no-cmake-for-native-tools.patch'
 
 table_line_replace DIST_POST_BUILD harfbuzz "$(table_line DIST_POST_BUILD harfbuzz | sed 's/rebuild_dist freetype /rebuild_dist freetype-target /')"
+
+table_line_append DIST_ARGS glib --with-python=/usr/bin/python3
 
 table_line_replace DIST_POST_BUILD glib     "$(table_line DIST_POST_BUILD glib     | sed 's/rebuild_dist gettext /rebuild_dist gettext-target /')"
 

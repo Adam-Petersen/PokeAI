@@ -27,14 +27,6 @@ case "$1" in
         ;;
 esac
 
-# Need to use Xcode 9 for 32 bit builds on Mojave and newer.
-# Place it in /Applications/Xcode9.app .
-if [ "$target_bits" -eq 32 ] && [ -d /Applications/Xcode9.app ]; then
-    PREV_XCODE=$(xcode-select -p)
-    printf "\nSetting Xcode9 as the default Xcode for 32 bit build...\n\n"
-    sudo xcode-select -s /Applications/Xcode9.app/Contents/Developer
-fi
-
 export BUILD_ROOT="$HOME/vbam-build-mac-${target_bits}bit"
 
 BUILD_ENV=$(cat <<EOF
@@ -93,6 +85,7 @@ table_line_append DIST_PATCHES m4 '-p0 https://raw.githubusercontent.com/macport
 # these are only applicable for cross-compiling to 32 bits
 if [ "$target_cpu" = i386 ]; then
     # some dists will not cross compile without a CONFIG_SITE
+    table_line_append DIST_ARGS glib '--host= --build='
     table_line_append DIST_ARGS pkgconfig '--host= --build='
     table_line_append DIST_ARGS docbook2x '--host= --build='
 
@@ -125,8 +118,3 @@ table_line_append DIST_ARGS libmodplug "CC=clang++ CXX=clang++"
 table_line_append DIST_CONFIGURE_OVERRIDES ffmpeg "--disable-videotoolbox --extra-ldflags='-framework CoreText'"
 
 builder "$@"
-
-if [ -n "$PREV_XCODE" ]; then
-    printf "\nRe-setting '$PREV_XCODE' as the default Xcode...\n\n"
-    sudo xcode-select -s "$PREV_XCODE"
-fi
