@@ -66,4 +66,6 @@ extern int gbRTCPresent;  // gbROM has RTC support
 
 extern struct EmulatedSystem GBSystem;
 
+void createBotThread();
+uint8_t gbReadMemory(uint16_t address);
 #endif // GB_H

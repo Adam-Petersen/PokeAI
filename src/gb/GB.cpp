@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <thread>
+#include <iostream>
 
 #include "../NLS.h"
 #include "../System.h"
@@ -17,6 +19,9 @@
 #include "gbMemory.h"
 #include "gbSGB.h"
 #include "gbSound.h"
+#include "../ai/test.h"
+#include "../ai/common.h"
+#include "../ai/world.h"
 
 #ifdef __GNUC__
 #define _stricmp strcasecmp
@@ -764,6 +769,8 @@ static const uint16_t gbColorizationPaletteData[32][3][4] = {
     }
 };
 
+int writeCount = 0;
+
 #define GBSAVE_GAME_VERSION_1 1
 #define GBSAVE_GAME_VERSION_2 2
 #define GBSAVE_GAME_VERSION_3 3
@@ -949,6 +956,7 @@ void gbCompareLYToLYC()
 
 void gbWriteMemory(uint16_t address, uint8_t value)
 {
+    World::handleMemoryWrite(address, value);
 
     if (address < 0x8000) {
 #ifndef FINAL_VERSION
@@ -2086,6 +2094,7 @@ void gbSerial_interrupt()
 
 void gbJoypad_interrupt()
 {
+    printf("joypad interrupt\n");
     gbMemory[0xff0f] = register_IF &= 0xef;
     gbWriteMemory(--SP.W, PC.B.B1);
     gbWriteMemory(--SP.W, PC.B.B0);
@@ -2286,6 +2295,7 @@ static void gbSelectColorizationPalette()
 
 void gbReset()
 {
+std::cout << "resetting\n";
 #ifndef NO_LINK
     if (GetLinkMode() == LINK_GAMEBOY_IPC || GetLinkMode() == LINK_GAMEBOY_SOCKET) {
         EmuReseted = true;
@@ -2825,6 +2835,9 @@ void gbReset()
     gbSystemMessage = false;
 
     gbCheatWrite(true); // Emulates GS codes.
+
+    // CUSTOM CODE
+    createBotThread();
 }
 
 #ifndef __LIBRETRO__
@@ -3689,6 +3702,7 @@ bool gbWriteSaveState(const char* name)
 
 static bool gbReadSaveState(gzFile gzFile)
 {
+    std::cout << "In gbReadSaveState()\n";
     int version = utilReadInt(gzFile);
 
     if (version > GBSAVE_GAME_VERSION || version < 0) {
@@ -5824,3 +5838,9 @@ struct EmulatedSystem GBSystem = {
     1000,
 #endif
 };
+
+void createBotThread() {
+    std::cout << "Creating bot thread\n";
+    std::thread t(aiStart);
+    t.detach();
+}
