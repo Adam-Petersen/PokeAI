@@ -1,34 +1,44 @@
 #define WINVER 0x0500
 #include "game.h"
 
-Game::Game() {
-	pmv = new PokeMemViewer();
-	input = new InputHandler(pmv);
-}
+Game::Game() {}
 
 Game::~Game() {
 	// printf("destroying game\
 	n");
-	delete input;
+	delete bm;
 	delete world;
+	delete input;
 	delete pmv;
 }
 
+void Game::handleMemoryWrite(uint16_t addr, uint8_t val) {
+	// world->handleMemoryWrite(addr, val);
+	bm->handleMemoryWrite(addr, val);
+}
+
+
 void Game::start() {
+	pmv = new PokeMemViewer();
 	world = new World(pmv);
-	world->start();
+	input = new InputHandler(pmv);
+	bm = new BattleManager(pmv, input);
+	is_started = true;
 	
-	std::unique_lock<std::mutex> lck(kill_mtx);
-	while(true) kill_thread.wait(lck);
+	// std::unique_lock<std::mutex> lck(kill_mtx);
+	// while(true) kill_thread.wait(lck);
 	// while(1) {
 	// 	// Sleep(200);
 	// 	updateWorld();
 	// }
 }
 
+// not used right now
 void Game::updateWorld() {
 	world->update();
 }
+
+
 
 void Game::testMovement1() {
 	Movement moves[5];

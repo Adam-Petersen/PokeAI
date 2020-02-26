@@ -20,8 +20,9 @@
 #include "gbSGB.h"
 #include "gbSound.h"
 #include "../ai/test.h"
-#include "../ai/common.h"
-#include "../ai/world.h"
+#include "../ai/util/common.h"
+// #include "../ai/game.h"
+#include "../ai/util/write_on_destruction.h"
 
 #ifdef __GNUC__
 #define _stricmp strcasecmp
@@ -956,7 +957,7 @@ void gbCompareLYToLYC()
 
 void gbWriteMemory(uint16_t address, uint8_t value)
 {
-    World::handleMemoryWrite(address, value);
+    WriteOnDestruction temp(address, value);
 
     if (address < 0x8000) {
 #ifndef FINAL_VERSION

@@ -883,31 +883,44 @@ set(
 
 set(
     HDR_AI
-    src/ai/block.h
-    src/ai/bmp.h
-    src/ai/common.h
+    src/ai/battle/battle_ai.h
+    src/ai/battle/battle_manager.h
+    src/ai/battle/battle_state.h
+    src/ai/battle/move.h
+    src/ai/battle/pokemon.h
+    src/ai/battle/simple_ai/simple_battle_ai.h
+    src/ai/map/block.h
+    src/ai/map/bmp.h
+    src/ai/map/map.h
+    src/ai/map/tile_drawer.h
+    src/ai/map/tile.h
+    src/ai/map/tileset.h
+    src/ai/map/world.h
+    src/ai/util/common.h
+    src/ai/util/globals.h
+    src/ai/util/input.h
+    src/ai/util/PokeMemViewer.h
+    src/ai/util/read_rom.h
+    src/ai/util/write_on_destruction.h
     src/ai/game.h
-    src/ai/input.h
-    src/ai/map.h
-    src/ai/PokeMemViewer.h
     src/ai/test.h
-    src/ai/tile_drawer.h
-    src/ai/tile.h
-    src/ai/tileset.h
-    src/ai/world.h
 )
 
 set(
     SRC_AI
-    src/ai/block.cpp
-    src/ai/bmp.cpp
+    src/ai/battle/battle_manager.cpp
+    src/ai/battle/pokemon.cpp
+    src/ai/battle/simple_ai/simple_battle_ai.cpp
+    src/ai/map/block.cpp
+    src/ai/map/bmp.cpp
+    src/ai/map/map.cpp
+    src/ai/map/tile_drawer.cpp
+    src/ai/map/world.cpp
+    src/ai/util/globals.cpp
+    src/ai/util/input.cpp
+    src/ai/util/PokeMemViewer.cpp
     src/ai/game.cpp
-    src/ai/input.cpp
-    src/ai/map.cpp
-    src/ai/PokeMemViewer.cpp
     src/ai/test.cpp
-    src/ai/tile_drawer.cpp
-    src/ai/world.cpp
 )
 
 if(ENABLE_ASM_SCALERS)

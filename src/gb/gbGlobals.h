@@ -8,17 +8,19 @@
 
 #include "../common/Types.h"
 
-std::mutex gbMemoryMtx;
-extern std::map<uint16_t, uint8_t> monitoredAddresses;
-extern std::map<uint16_t, std::condition_variable*> monitoredAddressCVS;
-extern std::mutex player_pos_mtx;
-extern std::mutex cur_map_mtx;
-extern std::mutex kill_mtx;
-extern std::condition_variable player_pos_cv;
-extern std::condition_variable cur_map_cv;
-extern std::condition_variable kill_thread;
-extern int tile_bytes_changed;
-extern bool update_map;
+// class Game;
+
+// std::mutex gbMemoryMtx;
+// extern std::map<uint16_t, uint8_t> monitoredAddresses;
+// extern std::map<uint16_t, std::condition_variable*> monitoredAddressCVS;
+// extern std::mutex player_pos_mtx;
+// extern std::mutex cur_map_mtx;
+// extern std::mutex kill_mtx;
+// extern std::condition_variable player_pos_cv;
+// extern std::condition_variable cur_map_cv;
+// extern std::condition_variable kill_thread;
+// extern int tile_bytes_changed;
+// extern bool update_map;
 
 extern int gbRomSizeMask;
 extern int gbRomSize;
