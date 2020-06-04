@@ -11,7 +11,7 @@ World::World(PokeMemViewer* _pmv) : pmv(_pmv), new_map(false) {
   setAllMapCoords();
   setIndoorMapCoords(true);
   printf("min_x: %d, max_x: %d, min_y: %d, max_y: %d\n", min_x, max_x, min_y, max_y);
-  createWorldImg(2);
+  // createWorldImg(2);
 
   // // init current map
   // // printf("world initing map\n");

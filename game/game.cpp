@@ -24,15 +24,15 @@ void Game::start() {
 	pmv = new PokeMemViewer();
 	GameData::updateBoxedMons(pmv->getCurBoxNo());
 	Sleep(1000);
-	world = new World(pmv);
+	// world = new World(pmv);
 	input = new InputHandler(pmv);
 	bm = new BattleManager(pmv);
-	gm = new GameManager(pmv, world);
+	// gm = new GameManager(pmv, world);
 	is_started = true;
-	num_chapters = ChapterFactory::createChapters(&chapters);
+	// num_chapters = ChapterFactory::createChapters(&chapters);
 
 	// beatGame();
-	printf("Game complete!\n");
+	printf("Game started!\n");
 
 
 	// std::unique_lock<std::mutex> lck(kill_mtx);

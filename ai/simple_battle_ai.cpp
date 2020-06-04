@@ -89,6 +89,11 @@ BattleInput SimpleBattleAI::chooseWAACMove(BattleState* battle)  {
   MoveChoice* choices;
   int num_choices = initMoveChoices(&choices, battle, true);
 
+  if (num_choices == 0) {
+    printf("no move choices\n");
+    throw;
+  }
+
   // printMoveChoices(choices, num_choices);
 
   // Find best moves

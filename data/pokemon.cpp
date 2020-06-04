@@ -21,7 +21,7 @@ void Pokemon::setBase(uint8_t index) {
 
 
 int Pokemon::getNumValidMoves() {
-  if (cur_hp > 0) { return 0; }
+  if (cur_hp <= 0) { return 0; }
 
   int num = 0;
   for (int i = 0; i < moves_and_pp.num_moves; i++) {
