@@ -1,0 +1,18 @@
+#ifndef SRC_ITEM
+#define SRC_ITEM
+
+enum class Item {
+  POKEBALL=0x04,
+  GREATBALL=0x03,
+  ULTRABALL=0x02,
+  SAFARIBALL=0x08,
+  ANTIDOTE=0x0B,
+  POTION=0x14,
+  HM_CUT=0xC4,
+  HM_FLY=0xC5,
+  HM_SURF=0xC6,
+  HM_STRENGTH=0xC7,
+  HM_FLASH=0xC8
+};
+
+#endif
